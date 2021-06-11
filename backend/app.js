@@ -3,8 +3,10 @@ const express = require("express");
 const userRoutes = require("./routes/userRoutes");
 const globalErrorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 

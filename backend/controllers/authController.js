@@ -80,7 +80,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // Save the password token to database
   await user.save({ validateBeforeSave: false });
 
-  const resetURl = `http://127.0.0.1:3000/api/v1/users/resetPassword/${resetToken}`;
+  const resetURl = `http://127.0.0.1:3000/resetPassword/${resetToken}`;
 
   const message = ` <h1>Your requested for reseting your password</h1>
   <p>Please Click on the Button to reset your password</p>
@@ -105,7 +105,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
 
-    return next(new AppError("Email could not be sent", 500));
+    return next(
+      new AppError("Email could not be sent. Please try again later!", 500)
+    );
   }
 });
 
@@ -130,9 +132,12 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetToken = undefined;
   user.passwordResetToken = undefined;
 
-  await user.save();
+  await user.save({ validateBeforeSave: false });
 
-  createAndSendToken(user, 201, res);
+  res.status(200).json({
+    status: "success",
+    message: "Password Reset Success",
+  });
 });
 
 exports.protect = catchAsync(async (req, res, next) => {

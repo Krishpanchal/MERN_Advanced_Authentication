@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { Redirect, Route, Switch } from "react-router-dom";
+import PrivateRoute from "./Private/PrivateRoute";
+import Users from "./screens/Users/Users";
+
+import Login from "./screens/Authentication/Login";
+import Signup from "./screens/Authentication/Signup";
+import ForgotPassword from "./screens/Authentication/ForgotPassword";
+import ResetPassword from "./screens/Authentication/ResetPassword";
+import NotFound from "./screens/NotFound";
+
+import "./index.css";
+import { isAuthenticated } from "./apiActions/actions";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='app'>
+      <Switch>
+        <PrivateRoute path='/' exact Component={Users} />
+
+        <Route path='/login'>
+          {isAuthenticated() ? <Redirect to='/' /> : <Login />}
+        </Route>
+        <Route path='/signup'>
+          {isAuthenticated() ? <Redirect to='/' /> : <Signup />}
+        </Route>
+        <Route path='/forgotPassword'>
+          {isAuthenticated() ? <Redirect to='/' /> : <ForgotPassword />}
+        </Route>
+        <Route path='/resetPassword/:token'>
+          {isAuthenticated() ? <Redirect to='/' /> : <ResetPassword />}
+        </Route>
+
+        <Route path='*'>
+          <NotFound />
+        </Route>
+      </Switch>
     </div>
   );
 }
